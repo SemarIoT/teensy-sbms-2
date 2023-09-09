@@ -80,8 +80,9 @@ unsigned long x = millis(); //declare variable x dengan value millis
 
 bool initEth = true;
 bool f = true; //penanda f
+// Deklarasi flag ethernet  dan modbus tidak boleh sama agar tidak jalan bersamaan saat pertama kali jalan
 bool ethernet = true; //boolean flag untuk memulai ethernet
-bool modbus1 = true; //boolean flag untuk memulai pembacaan modbus
+bool modbus1 = false; //boolean flag untuk memulai pembacaan modbus
 
 String queryString ; //String global agar queryString didefinisikan 1x
 int KWH = 1; //int id KWH dari 1
@@ -504,8 +505,8 @@ void loop() {
             modbus1 = true; //maka modbus 1 akan memulai
             
           }
-
-        if (modbus1 ==true) { //Apabila modbus 1 mulai maka akan trigger void modbus_jalan (pembacaan modbus) 1x saja
+          // Harus else if, agar hanya salah 1 saja yang jalan. Kalau 2 bersamaan akan error ethernet interrupted
+        else if (modbus1 ==true) { //Apabila modbus 1 mulai maka akan trigger void modbus_jalan (pembacaan modbus) 1x saja
             modbus_jalan();
             modbus1 = false;
             ethernet = true; //setelah 1x modbus jalan, maka ethernet akan memulai kembali
