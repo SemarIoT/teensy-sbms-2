@@ -42,7 +42,7 @@ EthernetClient client;
 EthernetSSLClient sslClient(client, TAs, (size_t)TAs_NUM);
 
 #define PIN_DE_1 2   // PIN DE 2 SERIAL 1
-#define PIN_RE_1 3   //PIN RE 3 SERIAL 1
+#define PIN_RE_1 3  //PIN RE 3 SERIAL 1
 #define PIN_DE_2 5   // PIN DE 2 SERIAL 2
 #define PIN_RE_2 6   //PIN RE 3 SERIAL 2
 #define PIN_DE_3 18  // PIN DE 2 SERIAL 4
@@ -150,10 +150,10 @@ void setup() {
   Serial5.begin(9600, SERIAL_8E1);
   //  Serial3.begin(9600, SERIAL_8N1);
 
-  node.begin(1, Serial1);  //(slave id : 1)
-  node1.begin(2, Serial2); //(slave id : 2)
-  node2.begin(3, Serial4); //(slave id : 3)
-  node3.begin(4, Serial5); //(slave id : 4)
+  node3.begin(1, Serial1);  //(slave id : 1)
+  node2.begin(2, Serial2); //(slave id : 2)
+  node1.begin(3, Serial4); //(slave id : 3)
+  node.begin(4, Serial5); //(slave id : 4)
   //node1.begin(2, Serial2);
 
   Serial.println("BEGIN:");
@@ -187,7 +187,7 @@ void loop() {
   //   initEth = false;
   // }
 
-  if (millis() - oldMillis >= 60000 && modbus1 == false) {
+  if (millis() - oldMillis >= 300000 && modbus1 == false) {
     start_conn();
     Serial.println("Disconnecting.");
     sslClient.stop();
@@ -279,7 +279,7 @@ void start_conn() {
 void freqs() {  //freq OUTLET
   Serial.println("Node 1");
   // Freq
-  result = node.readHoldingRegisters(0x07E1, 1);  //memanggil fungsi read pada register (alamat, besar data)
+  result = node.readHoldingRegisters(0x0C26, 2);  //memanggil fungsi read pada register (alamat, besar data)
   if (result == node.ku8MBSuccess) {
     Serial.print("Baca data: ");
     data[0] = node.getResponseBuffer(0);
@@ -298,7 +298,7 @@ void freqs() {  //freq OUTLET
 void freqs2() {  //freq Lamp
   Serial.println("Node 2");
   // Freq
-  result = node1.readHoldingRegisters(0x07E1, 1);  //memanggil fungsi read pada register (alamat, besar data)
+  result = node1.readHoldingRegisters(0x0C26, 2);  //memanggil fungsi read pada register (alamat, besar data)
   if (result == node1.ku8MBSuccess) {
     Serial.print("Baca data: ");
     data[0] = node1.getResponseBuffer(0);
@@ -316,11 +316,11 @@ void freqs2() {  //freq Lamp
 
 void freqs3() {  //freq AC1
   Serial.println("Node 3");
-  result = node2.readHoldingRegisters(0x07E1, 1);  //memanggil fungsi read pada register (alamat, besar data)
+  result = node2.readHoldingRegisters(0x0C26, 2);  //memanggil fungsi read pada register (alamat, besar data)
   if (result == node2.ku8MBSuccess) {
     Serial.print("Baca data: ");
     data[0] = node2.getResponseBuffer(0);
-    data[1] = node1.getResponseBuffer(1);
+    data[1] = node2.getResponseBuffer(1);
     Serial.print(" Frekuensi Nominal:");
     konversi.dataInt[0] = data[1];
     konversi.dataInt[1] = data[0];
@@ -334,11 +334,11 @@ void freqs3() {  //freq AC1
 
 void freqs4() {  //freq AC2
   Serial.println("Node 4");
-  result = node3.readHoldingRegisters(0x07E1, 1);  //memanggil fungsi read pada register (alamat, besar data)
+  result = node3.readHoldingRegisters(0x0C26, 2);  //memanggil fungsi read pada register (alamat, besar data)
   if (result == node3.ku8MBSuccess) {
     Serial.print("Baca data: ");
     data[0] = node3.getResponseBuffer(0);
-    data[1] = node1.getResponseBuffer(1);
+    data[1] = node3.getResponseBuffer(1);
     Serial.print(" Frekuensi Nominal:");
     konversi.dataInt[0] = data[1];
     konversi.dataInt[1] = data[0];
@@ -712,7 +712,7 @@ void Apparentpowers4() {  //apparent ac2
 
 void totalactives() {  //totalactive mod_1
   Serial.println("Node 1");
-  result = node.readHoldingRegisters(0x0C8C, 2);  //Memanggil fungsi read pada register (alamat, besar data)
+  result = node.readHoldingRegisters(0xB038, 2);  //Memanggil fungsi read pada register (alamat, besar data)
   if (result == node.ku8MBSuccess) {
     Serial.print("Baca data: ");
     data[0] = node.getResponseBuffer(0);
@@ -730,8 +730,8 @@ void totalactives() {  //totalactive mod_1
 
 void totalactives2() {  //totalactive mod_2
   Serial.println("Node 2");
-  result = node1.readHoldingRegisters(0x0C8C, 2);  //Memanggil fungsi read pada register (alamat, besar data)
-  if (result == node.ku8MBSuccess) {
+  result = node1.readHoldingRegisters(0xB038, 2);  //Memanggil fungsi read pada register (alamat, besar data)
+  if (result == node1.ku8MBSuccess) {
     Serial.print("Baca data: ");
     data[0] = node1.getResponseBuffer(0);
     data[1] = node1.getResponseBuffer(1);
@@ -748,8 +748,8 @@ void totalactives2() {  //totalactive mod_2
 
 void totalactives3() {  //totalactive mod_3
   Serial.println("Node 3");
-  result = node2.readHoldingRegisters(0x0C8C, 2);  //Memanggil fungsi read pada register (alamat, besar data)
-  if (result == node.ku8MBSuccess) {
+  result = node2.readHoldingRegisters(0xB038, 2);  //Memanggil fungsi read pada register (alamat, besar data)
+  if (result == node2.ku8MBSuccess) {
     Serial.print("Baca data: ");
     data[0] = node2.getResponseBuffer(0);
     data[1] = node2.getResponseBuffer(1);
@@ -766,8 +766,8 @@ void totalactives3() {  //totalactive mod_3
 
 void totalactives4() {  //totalactive mod_1
   Serial.println("Node 4");
-  result = node3.readHoldingRegisters(0x0C8C, 2);  //Memanggil fungsi read pada register (alamat, besar data)
-  if (result == node.ku8MBSuccess) {
+  result = node3.readHoldingRegisters(0xB038, 2);  //Memanggil fungsi read pada register (alamat, besar data)
+  if (result == node3.ku8MBSuccess) {
     Serial.print("Baca data: ");
     data[0] = node3.getResponseBuffer(0);
     data[1] = node3.getResponseBuffer(1);
@@ -787,9 +787,9 @@ void Post_data(int KWH) {  //void untuk POST ke database
     queryString = "id_kwh=1&frekuensi=" + String(freq) + "&arus=" + String(current) + "&tegangan=" + String(volt) + "&active_power=" + String(activepower) + "&reactive_power=" + String(reactivepower) + "&apparent_power=" + String(Apparentpower) + "&energy=" + String(totalactive) + "&submit=enter";
   } else if (KWH == 2) {  //Apabila ID KWH =2 sudah terbaca, maka akan lanjut membaca id KWH 2 dan mengirimkan queryString id KWH 2
     queryString = "id_kwh=2&frekuensi=" + String(freq2) + "&arus=" + String(current2) + "&tegangan=" + String(volt2) + "&active_power=" + String(activepower2) + "&reactive_power=" + String(reactivepower2) + "&apparent_power=" + String(Apparentpower2) + "&energy=" + String(totalactive2) + "&submit=enter";
-  } else if (KWH == 3) {  //Apabila ID KWH =3 sudah terbaca, maka akan lanjut membaca id KWH 2 dan mengirimkan queryString id KWH 2
+  } else if (KWH == 3) {  //Apabila ID KWH =3 sudah terbaca, maka akan lanjut membaca id KWH 3 dan mengirimkan queryString id KWH 2
     queryString = "id_kwh=3&frekuensi=" + String(freq3) + "&arus=" + String(current3) + "&tegangan=" + String(volt3) + "&active_power=" + String(activepower3) + "&reactive_power=" + String(reactivepower3) + "&apparent_power=" + String(Apparentpower3) + "&energy=" + String(totalactive3) + "&submit=enter";
-  } else if (KWH == 4) {  //Apabila ID KWH =4 sudah terbaca, maka akan lanjut membaca id KWH 2 dan mengirimkan queryString id KWH 2
+  } else if (KWH == 4) {  //Apabila ID KWH =4 sudah terbaca, maka akan lanjut membaca id KWH 4 dan mengirimkan queryString id KWH 2
     queryString = "id_kwh=4&frekuensi=" + String(freq4) + "&arus=" + String(current4) + "&tegangan=" + String(volt4) + "&active_power=" + String(activepower4) + "&reactive_power=" + String(reactivepower4) + "&apparent_power=" + String(Apparentpower4) + "&energy=" + String(totalactive4) + "&submit=enter";
   }
 
